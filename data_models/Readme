@@ -1,4 +1,6 @@
-To start the pokemon battle 
-Go to main.py 
-Run it 
-Follow instructions in terminal 
+Instructions to run the code:
+Make sure you have python installed on your computer
+Navigate to the data_models folder (in terminal cd data_models)
+Run the following command in the terminal
+python main.py 
+Follow the instructions in the terminal to start the pokemon battle

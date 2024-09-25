@@ -37,24 +37,42 @@ class Pokemon():
         else:
             return {'strong_against': None, 'weak_against': None, 'resists': None, 'immune': None}
     
-    def calculate_damage(self, opponent) -> float:
+    def calculate_damage(self, move_type: str, opponent) -> float:
         base_damage = self.attack - opponent.defense
 
         # Checks if pokemon is immune to the type of the opponent
-        if opponent.type_benefits.get('immune') == self.type:
-            print(f"{self.name} it doesn't affect the opponent {opponent.name}")
+        if opponent.type_benefits.get('immune') == move_type:
+            print(f"{self.name}'s {move_type} move doesn't affect the opponent {opponent.name}!")
             return 0  # No damage calculated
 
-        # Checks if pokemon is Electric and opponent is Ground
-        if self.type == 'Electric' and opponent.type == 'Ground':
-            print(f"{self.name} it doesn't affect the opponent {opponent.name}!")
-            return 0  # No damage calculated
-        
-        if self.type_benefits['strong_against'] and opponent.type in self.type_benefits['strong_against']:
+        # Checks the interaction between the move's type and the opponent's type
+        if move_type in opponent.type_benefits.get('weak_against', []):
+            print(f"{self.name}'s {move_type} move does extra damage to {opponent.name}!")
             return base_damage * 2  # Attack bonus x2 damage if own type is strong against opponent
-        elif self.type_benefits.get('weak_against') and opponent.type in self.type_benefits['weak_against']:
-            return base_damage * 0.5  # Attack penalty x0.5 damage if own type is weak against opponent
-        elif opponent.type_benefits.get('resists') == self.type:
+        elif move_type in opponent.type_benefits.get('strong_against', []):
+            print(f"{self.name}'s {move_type} move does less damage to {opponent.name}.")
+            return base_damage * 0.5 # Attack penalty x0.5 damage if own type is weak against opponent
+        elif move_type in opponent.type_benefits.get('resists', []):
+            print(f"{opponent.name} resists the {move_type} move!")
             return base_damage * 0.5  # Defense bonus x0.5 damage if opponent resists your type
         else:
-            return base_damage 
+            return base_damage
+    
+    def attack_opponent(self, move_index: int, opponent) -> None:
+        move_name, move_power, move_type = self.moves[move_index]  # Gets the chosen move
+        print(f"{self.name} uses {move_name}!")
+
+        # Calculates the damage
+        damage = self.calculate_damage(move_type, opponent)
+        
+        # Adds move power if opponent is not immune
+        if damage > 0:
+            damage += move_power
+
+        # Makes it so that the opponents health can't go below 0
+        opponent.health -= max(0, damage)
+        
+        print(f"{opponent.name} takes {damage} damage!")
+        if opponent.health <= 0:
+            opponent.alive = False
+            print(f"{opponent.name} is defeated!")

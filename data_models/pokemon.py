@@ -8,7 +8,7 @@ from ground_type import ground_benefits
 
 class Pokemon():
     #Base stats for a pokemon
-    def __init__(self, name: str, types: str, level: int, health: int, attack: int, defense: int, moves: List[Tuple[str, int]]) -> None:
+    def __init__(self, name: str, types: str, level: int, health: int, attack: int, defense: int, moves: List[Tuple[str, int, str]]) -> None:
         self.name = name
         self.type = types
         self.level = level
